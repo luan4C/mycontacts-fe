@@ -6,60 +6,59 @@ import Input from '../Input';
 import Select from '../Select';
 import Button from '../Button';
 import isEmailValid from '../../utils/isEmailValid';
+import useErrors from '../../hooks/useError';
+import formatPhone from '../../utils/formatPhone';
 
 export default function ContactForm({ buttonLabel }) {
-  const [name, SetName] = useState('');
-  const [email, SetEmail] = useState('');
-  const [phone, SetPhone] = useState('');
-  const [social, SetSocial] = useState('');
-  const [errors, SetErrors] = useState([]);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [social, setSocial] = useState('');
+  const {
+    errors, setError, removeError, getErrosMensageByFieldName,
+  } = useErrors();
+
+  const isFormInvalid = !(name && errors.length === 0);
 
   function handleNameChange(event) {
-    SetName(event.target.value);
+    setName(event.target.value);
 
     if (!event.target.value) {
-      SetErrors((prev) => [...prev, {
-        field: 'name', message: 'Nome é obrigatório!',
-      }]);
+      setError({ field: 'name', message: 'Nome é obrigatório!' });
     } else {
-      SetErrors((prev) => prev.filter((err) => err.field !== 'name'));
+      removeError('name');
     }
   }
   function handleEmailChange(event) {
-    SetEmail(event.target.value);
+    setEmail(event.target.value);
     if (event.target.value && !isEmailValid(event.target.value)) {
-      if (!errors.find((err) => err.field === 'email')) {
-        SetErrors((prev) => [...prev, {
-          field: 'email', message: 'Email inválido!',
-        }]);
-      }
+      setError({ field: 'email', message: 'E-mail inválido!' });
     } else {
-      SetErrors((prev) => prev.filter((err) => err.field !== 'email'));
+      removeError('email');
     }
+  }
+  function handlePhoneChange(event) {
+    setPhone(formatPhone(event.target.value));
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log({
-      name, email, phone, social,
-    });
+    // console.log({
+    //   name, email, phone, social,
+    // });
   }
-
-  function getErrosMensageByFieldName(fieldName) {
-    return errors.find((error) => error.field === fieldName)?.message;
-  }
-  console.log(errors);
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit} noValidate>
       <FormGroup error={getErrosMensageByFieldName('name')}>
         <Input
-          placeholder="Nome"
+          placeholder="Nome *"
           value={name}
           onChange={handleNameChange}
         />
       </FormGroup>
       <FormGroup error={getErrosMensageByFieldName('email')}>
         <Input
+          type="email"
           placeholder="E-mail"
           value={email}
           onChange={handleEmailChange}
@@ -69,13 +68,14 @@ export default function ContactForm({ buttonLabel }) {
         <Input
           placeholder="Telefone"
           value={phone}
-          onChange={(event) => SetPhone(event.target.value)}
+          onChange={handlePhoneChange}
+          maxLength="15"
         />
       </FormGroup>
       <FormGroup>
         <Select
           value={social}
-          onChange={(event) => SetSocial(event.target.value)}
+          onChange={(event) => setSocial(event.target.value)}
         >
           <option value="">Selecione</option>
           <option value="instagram">Instagram</option>
@@ -84,7 +84,7 @@ export default function ContactForm({ buttonLabel }) {
       </FormGroup>
       <ButtonContainer>
 
-        <Button>{buttonLabel}</Button>
+        <Button disabled={isFormInvalid}>{buttonLabel}</Button>
       </ButtonContainer>
     </Form>
   );
