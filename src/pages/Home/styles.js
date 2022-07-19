@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
     margin-top: 22px;
@@ -10,7 +10,7 @@ export const Header = styled.header`
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    margin-top: 24px;
 
     strong {
         color: #222;
@@ -33,22 +33,32 @@ export const Header = styled.header`
     }
 `;
 
-export const ListContainer = styled.div`
+export const ListHeader = styled.div`
     margin-top: 24px;
+    margin-bottom: 8px;
 
     header{
-        margin-bottom: 8px;
+
         .sort-button {
             background: transparent;
             border: none;
             display: flex;
             align-items: center;
+
         }
 
         span {
             margin-right: 8px;
             font-weight: bold;
             color: ${({ theme }) => theme.colors.primary.main};
+        }
+
+        img {
+            ${({ sortOrder }) => sortOrder === 'desc' && css`
+                    transform: rotate(180deg);
+            `}
+
+            transition: transform 300ms ease-in;
         }
     }
 
