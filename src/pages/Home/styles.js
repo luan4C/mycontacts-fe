@@ -9,9 +9,10 @@ export const Header = styled.header`
 
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: ${({ hasError }) => (hasError ? 'flex-end' : 'space-between')};
     margin-top: 24px;
-
+    border-bottom:  2px solid ${({ theme }) => theme.colors.gray[100]};
+    padding-bottom: 16px;
     strong {
         color: #222;
         font-size: 24px;
@@ -126,4 +127,26 @@ input {
         color:#bcbcbc;
     }
 }
+`;
+
+export const ErrorContainer = styled.div`
+    margin-top:16px;
+
+    display: flex;
+
+    align-items: center;
+
+    .details {
+        margin-left: 24px;
+
+        strong {
+            font-size: 22px;
+            color: ${({ theme }) => theme.colors.danger.main};
+            display: block;
+        }
+
+        button {
+            margin-top: 8px
+        }
+    }
 `;
