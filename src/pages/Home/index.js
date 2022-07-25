@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState, useMemo } from 'react';
+import {
+  useEffect, useState, useMemo, useCallback,
+} from 'react';
 import {
   Container, Header, ListHeader, Card, InputSearchContainer, ErrorContainer,
 } from './styles';
@@ -21,7 +23,7 @@ export default function Home() {
   const filteredContacts = useMemo(() => contacts.filter((contact) => (
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()))), [contacts, searchTerm]);
 
-  async function loadContacts() {
+  const loadContacts = useCallback(async () => {
     try {
       setIsLoading(true);
       const contactsList = await ContactsServices.listContacts(sortOrder);
@@ -32,12 +34,12 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [sortOrder]);
   useEffect(
     () => {
       loadContacts();
     },
-    [sortOrder],
+    [loadContacts],
   );
 
   function handleSort() {
