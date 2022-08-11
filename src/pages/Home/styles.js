@@ -9,7 +9,7 @@ export const Header = styled.header`
 
     display: flex;
     align-items: center;
-    justify-content: ${({ hasError }) => (hasError ? 'flex-end' : 'space-between')};
+    justify-content: ${({ justifyContent }) => justifyContent};
     margin-top: 24px;
     border-bottom:  2px solid ${({ theme }) => theme.colors.gray[100]};
     padding-bottom: 16px;
@@ -148,5 +148,35 @@ export const ErrorContainer = styled.div`
         button {
             margin-top: 8px
         }
+    }
+`;
+
+export const EmptyListContainer = styled.div`
+
+    margin-top: 16px;
+    display:flex;
+
+    flex-direction: column;
+    align-items: center;
+    color: ${({ theme }) => theme.colors.gray[200]};
+    strong {
+        color: ${({ theme }) => theme.colors.primary.main}
+    }
+    p{
+        margin-top: 8px;
+        text-align: center;
+    }
+`;
+
+export const NoContactFoundContainer = styled.div`
+    margin-top: 16px;
+    display: flex;
+    align-items: flex-start;
+
+
+    span {
+        margin-left: 24px;
+        color: ${({ theme }) => theme.colors.gray[200]};
+        word-break: break-word;
     }
 `;

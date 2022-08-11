@@ -1,14 +1,18 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 import { Link } from 'react-router-dom';
 import {
   useEffect, useState, useMemo, useCallback,
 } from 'react';
 import {
-  Container, Header, ListHeader, Card, InputSearchContainer, ErrorContainer,
+  Container, Header, ListHeader, Card, InputSearchContainer, ErrorContainer, EmptyListContainer,
+  NoContactFoundContainer,
 } from './styles';
 import Loader from '../../components/Loader';
 import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
 import trash from '../../assets/images/icons/trash.svg';
+import emptyBox from '../../assets/images/icons/empty-box.svg';
+import magnifierQuestion from '../../assets/images/icons/magnifier-question.svg';
 import sad from '../../assets/images/sad.svg';
 import ContactsServices from '../../services/ContactsServices';
 import Button from '../../components/Button';
@@ -54,12 +58,19 @@ export default function Home() {
   return (
     <Container>
       <Loader isLoading={isLoading} />
+      {contacts.length > 0
+      && (
       <InputSearchContainer>
         <input type="text" value={searchTerm} onChange={handleChangeSearchTerm} placeholder="Pesquisar contato" />
       </InputSearchContainer>
-
-      <Header hasError={hasError}>
-        { !hasError
+      ) }
+      <Header
+        justifyContent={
+            // eslint-disable-next-line no-nested-ternary
+            hasError ? 'flex-end' : (contacts.length > 0 ? 'space-between' : 'center')
+        }
+      >
+        { (!hasError && contacts.length > 0)
         && (
         <strong>
           {filteredContacts.length}
@@ -82,6 +93,25 @@ export default function Home() {
       }
       {!hasError && (
       <>
+        {(contacts.length < 1 && !isLoading) && (
+
+        <EmptyListContainer>
+          <img src={emptyBox} alt="empty-box" />
+
+          <p>Você ainda não tem nenhum contato cadastrado!
+            Clique no botão <strong>”Novo contato”</strong> à cima para cadastrar o seu primeiro!
+          </p>
+        </EmptyListContainer>
+        )}
+
+        {(contacts.length > 0 && filteredContacts.length === 0)
+        && (
+        <NoContactFoundContainer>
+          <img src={magnifierQuestion} alt="magnifier" />
+          <span>Nenhum contato encontrado para  <strong>&ldquo;{searchTerm}&ldquo;</strong></span>
+        </NoContactFoundContainer>
+        )}
+
         {filteredContacts.length > 1 && (
         <ListHeader sortOrder={sortOrder}>
           <header>
