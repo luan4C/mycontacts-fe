@@ -17,19 +17,20 @@ export default function ContactForm({ buttonLabel }) {
   const [phone, setPhone] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const {
     errors, setError, removeError, getErrosMensageByFieldName,
   } = useErrors();
   const getCategories = useCallback(async () => {
-    setIsLoading(true);
+    setIsCategoriesLoading(true);
     try {
       const data = await CategoriesServices.getCategories();
       setCategories(data);
     } catch {
 
     } finally {
-      setIsLoading(false);
+      setIsCategoriesLoading(false);
     }
   }, []);
 
@@ -58,6 +59,8 @@ export default function ContactForm({ buttonLabel }) {
 
   function handleSubmit(event) {
     event.preventDefault();
+    setIsLoading(true);
+    setIsLoading(false);
     // console.log({
     //   name, email, phone, categoryId,
     // });
@@ -97,6 +100,7 @@ export default function ContactForm({ buttonLabel }) {
           <Select
             value={categoryId}
             onChange={(event) => setCategoryId(event.target.value)}
+            disabled={isCategoriesLoading}
           >
             <option value="">Categories</option>
             {categories.map((category) => (
