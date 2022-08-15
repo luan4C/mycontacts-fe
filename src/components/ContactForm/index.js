@@ -11,7 +11,7 @@ import formatPhone from '../../utils/formatPhone';
 import CategoriesServices from '../../services/CategoriesServices';
 import Loader from '../Loader';
 
-export default function ContactForm({ buttonLabel }) {
+export default function ContactForm({ buttonLabel, onSubmit }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -57,22 +57,24 @@ export default function ContactForm({ buttonLabel }) {
     setPhone(formatPhone(event.target.value));
   }
 
-  function handleSubmit(event) {
+  function handleOnSubmit(event) {
     event.preventDefault();
     setIsLoading(true);
+
+    const data = {
+      name, email, phone, categoryId,
+    };
+    onSubmit(data);
     setIsLoading(false);
-    // console.log({
-    //   name, email, phone, categoryId,
-    // });
   }
 
   useEffect(() => {
     getCategories();
-  }, []);
+  }, [getCategories]);
   return (
     <>
       <Loader isLoading={isLoading} />
-      <Form onSubmit={handleSubmit} noValidate>
+      <Form onSubmit={handleOnSubmit} noValidate>
         <FormGroup error={getErrosMensageByFieldName('name')}>
           <Input
             placeholder="Nome *"
@@ -96,7 +98,7 @@ export default function ContactForm({ buttonLabel }) {
             maxLength="15"
           />
         </FormGroup>
-        <FormGroup>
+        <FormGroup isLoading={isCategoriesLoading}>
           <Select
             value={categoryId}
             onChange={(event) => setCategoryId(event.target.value)}
@@ -121,4 +123,5 @@ export default function ContactForm({ buttonLabel }) {
 
 ContactForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
