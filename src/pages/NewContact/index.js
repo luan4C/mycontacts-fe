@@ -9,7 +9,7 @@ export default function NewContact() {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        category_i: formData.categoryId,
+        category_id: formData.categoryId,
       };
       await ContactsServices.createContact(data);
     } catch (err) {

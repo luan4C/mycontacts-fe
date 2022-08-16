@@ -9,15 +9,15 @@ import isEmailValid from '../../utils/isEmailValid';
 import useErrors from '../../hooks/useError';
 import formatPhone from '../../utils/formatPhone';
 import CategoriesServices from '../../services/CategoriesServices';
-import Loader from '../Loader';
 
 export default function ContactForm({ buttonLabel, onSubmit }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState([]);
   const {
     errors, setError, removeError, getErrosMensageByFieldName,
@@ -59,65 +59,71 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
 
   function handleOnSubmit(event) {
     event.preventDefault();
-    setIsLoading(true);
-
+    setIsSubmitting(true);
     const data = {
       name, email, phone, categoryId,
     };
-    onSubmit(data);
-    setIsLoading(false);
+
+    onSubmit(data).finally(() => {
+      setIsSubmitting(false);
+    });
   }
 
   useEffect(() => {
     getCategories();
   }, [getCategories]);
   return (
-    <>
-      <Loader isLoading={isLoading} />
-      <Form onSubmit={handleOnSubmit} noValidate>
-        <FormGroup error={getErrosMensageByFieldName('name')}>
-          <Input
-            placeholder="Nome *"
-            value={name}
-            onChange={handleNameChange}
-          />
-        </FormGroup>
-        <FormGroup error={getErrosMensageByFieldName('email')}>
-          <Input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={handleEmailChange}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Input
-            placeholder="Telefone"
-            value={phone}
-            onChange={handlePhoneChange}
-            maxLength="15"
-          />
-        </FormGroup>
-        <FormGroup isLoading={isCategoriesLoading}>
-          <Select
-            value={categoryId}
-            onChange={(event) => setCategoryId(event.target.value)}
-            disabled={isCategoriesLoading}
-          >
-            <option value="">Categories</option>
-            {categories.map((category) => (
-              <option key={category.category_id} value={category.category_id}>
-                {category.name}
-              </option>
-            ))}
-          </Select>
-        </FormGroup>
-        <ButtonContainer>
+    <Form onSubmit={handleOnSubmit} noValidate>
+      <FormGroup error={getErrosMensageByFieldName('name')}>
+        <Input
+          placeholder="Nome *"
+          value={name}
+          onChange={handleNameChange}
+          disabled={isSubmitting}
+        />
+      </FormGroup>
+      <FormGroup error={getErrosMensageByFieldName('email')}>
+        <Input
+          type="email"
+          placeholder="E-mail"
+          value={email}
+          onChange={handleEmailChange}
+          disabled={isSubmitting}
 
-          <Button disabled={isFormInvalid}>{buttonLabel}</Button>
-        </ButtonContainer>
-      </Form>
-    </>
+        />
+      </FormGroup>
+      <FormGroup>
+        <Input
+          placeholder="Telefone"
+          value={phone}
+          onChange={handlePhoneChange}
+          maxLength="15"
+          disabled={isSubmitting}
+
+        />
+      </FormGroup>
+      <FormGroup isLoading={isCategoriesLoading}>
+        <Select
+          value={categoryId}
+          onChange={(event) => setCategoryId(event.target.value)}
+          disabled={isCategoriesLoading || isSubmitting}
+        >
+          <option value="">Categories</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
+      </FormGroup>
+      <ButtonContainer>
+
+        <Button disabled={isFormInvalid} isLoading={isSubmitting}>
+          {buttonLabel}
+
+        </Button>
+      </ButtonContainer>
+    </Form>
   );
 }
 

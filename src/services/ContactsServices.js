@@ -10,7 +10,7 @@ class ContactsServices {
   }
 
   createContact(data) {
-    return this.httpClient.post('/contacts', data);
+    return this.httpClient.post('/contacts', { body: data });
   }
 }
 
