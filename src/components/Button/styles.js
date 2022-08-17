@@ -1,8 +1,6 @@
 import styled, { css } from 'styled-components';
-import PropTypes from 'prop-types';
-import Spinner from './Spinner';
 
-const StyledButton = styled.button`
+export const StyledButton = styled.button`
 
     border: none;
     height: 52px;
@@ -41,23 +39,3 @@ const StyledButton = styled.button`
     `}
 
 `;
-
-export default function Button({ children, isLoading, disabled }) {
-  return (
-    <StyledButton disabled={disabled || isLoading}>
-      { isLoading
-        ? <Spinner size={16} /> : children}
-    </StyledButton>
-  );
-}
-
-Button.propTypes = {
-  children: PropTypes.node.isRequired,
-  isLoading: PropTypes.bool,
-  disabled: PropTypes.bool,
-};
-
-Button.defaultProps = {
-  isLoading: false,
-  disabled: false,
-};
