@@ -9,6 +9,7 @@ import isEmailValid from '../../utils/isEmailValid';
 import useErrors from '../../hooks/useError';
 import formatPhone from '../../utils/formatPhone';
 import CategoriesServices from '../../services/CategoriesServices';
+import toast from '../../services/utils/toast';
 
 export default function ContactForm({ buttonLabel, onSubmit }) {
   const [name, setName] = useState('');
@@ -28,7 +29,7 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
       const data = await CategoriesServices.getCategories();
       setCategories(data);
     } catch {
-
+      toast({ type: 'danger', text: 'Erro ao buscar categorias' });
     } finally {
       setIsCategoriesLoading(false);
     }
@@ -57,16 +58,16 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
     setPhone(formatPhone(event.target.value));
   }
 
-  function handleOnSubmit(event) {
+  async function handleOnSubmit(event) {
     event.preventDefault();
     setIsSubmitting(true);
     const data = {
       name, email, phone, categoryId,
     };
 
-    onSubmit(data).finally(() => {
-      setIsSubmitting(false);
-    });
+    await onSubmit(data);
+
+    setIsSubmitting(false);
   }
 
   useEffect(() => {
@@ -118,7 +119,7 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
       </FormGroup>
       <ButtonContainer>
 
-        <Button disabled={isFormInvalid} isLoading={isSubmitting}>
+        <Button type="submit" disabled={isFormInvalid} isLoading={isSubmitting}>
           {buttonLabel}
 
         </Button>
