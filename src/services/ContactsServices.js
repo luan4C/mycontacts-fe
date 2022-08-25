@@ -9,6 +9,10 @@ class ContactsServices {
     return this.httpClient.get(`/contacts?orderBy=${orderBy}`);
   }
 
+  getContactById(id) {
+    return this.httpClient.get(`/contacts/${id}`);
+  }
+
   createContact(data) {
     return this.httpClient.post('/contacts', { body: data });
   }

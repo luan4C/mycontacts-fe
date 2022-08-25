@@ -17,14 +17,13 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
   const [phone, setPhone] = useState('');
   const [categoryId, setCategoryId] = useState('');
 
-  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState([]);
   const {
     errors, setError, removeError, getErrosMensageByFieldName,
   } = useErrors();
   const getCategories = useCallback(async () => {
-    setIsCategoriesLoading(true);
     try {
       const data = await CategoriesServices.getCategories();
       setCategories(data);
@@ -68,6 +67,10 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
     await onSubmit(data);
 
     setIsSubmitting(false);
+    setName('');
+    setEmail('');
+    setPhone('');
+    setCategoryId('');
   }
 
   useEffect(() => {
