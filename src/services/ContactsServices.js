@@ -20,6 +20,10 @@ class ContactsServices {
   updateContact(id, data) {
     return this.httpClient.put(`/contacts/${id}`, { body: data });
   }
+
+  deleteContact(id) {
+    return this.httpClient.delete(`/contacts/${id}`);
+  }
 }
 
 export default new ContactsServices();
