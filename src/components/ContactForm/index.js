@@ -12,6 +12,7 @@ import useErrors from '../../hooks/useError';
 import formatPhone from '../../utils/formatPhone';
 import CategoriesServices from '../../services/CategoriesServices';
 import toast from '../../services/utils/toast';
+import useSafeAsynState from '../../hooks/useSafeAsyncState';
 
 const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
   const [name, setName] = useState('');
@@ -19,9 +20,9 @@ const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
   const [phone, setPhone] = useState('');
   const [categoryId, setCategoryId] = useState('');
 
-  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useSafeAsynState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useSafeAsynState([]);
   const {
     errors, setError, removeError, getErrosMensageByFieldName,
   } = useErrors();
@@ -34,7 +35,7 @@ const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
     } finally {
       setIsCategoriesLoading(false);
     }
-  }, []);
+  }, [setCategories, setIsCategoriesLoading]);
 
   const isFormInvalid = !(name && errors.length === 0);
 
