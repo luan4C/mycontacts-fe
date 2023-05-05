@@ -21,11 +21,14 @@ export default function Home() {
     hasError, isDeleteModalVisible, isDeleting, isLoading, searchTerm, sortOrder,
     handleDeleteModalCancel, contactBeingDeleted,
   } = useHome();
+  const hasContacts = contacts.length > 0;
+  const isListEmpty = (contacts.length < 1 && !isLoading) && !hasError;
+  const isSearchEmpty = (hasContacts > 0 && filteredContacts.length === 0) && !hasError;
   return (
     <Container>
       <Loader isLoading={isLoading} />
 
-      {contacts.length > 0
+      {hasContacts > 0
       && (
       <InputSearch value={searchTerm} onChange={handleChangeSearchTerm} placeholder="Pesquisas Contato" />
       ) }
@@ -39,17 +42,18 @@ export default function Home() {
         <ErrorStatus onTryAgain={handleTryAgain} />
         )
       }
-      {!hasError && (
-      <>
-        {(contacts.length < 1 && !isLoading) && (
+      {isListEmpty && (
 
         <EmptyList />
-        )}
+      )}
 
-        {(contacts.length > 0 && filteredContacts.length === 0)
+      {isSearchEmpty
         && (
         <SearchNotFound searchTerm={searchTerm} />
         )}
+      {hasContacts && (
+      <>
+
         <ContactsList
           filteredContacts={filteredContacts}
           sortOrder={sortOrder}
