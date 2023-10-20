@@ -1,36 +1,19 @@
 import PropTypes from 'prop-types';
-import { useState, useEffect, useRef } from 'react';
 import Button from '../Button';
 import ReactPortal from '../ReactPortal';
 import { Container, Overlay, Footer } from './styles';
+import useAnimatedUnmount from '../../hooks/useAnimatedUnmount';
 
 export default function Modal({
   danger, title, children, cancelLabel, confirmLabel, onCancel, onConfirm, visible,
   isLoading,
 }) {
-  const [shouldRender, setShouldRender] = useState(visible);
-  const overlayRef = useRef();
-  useEffect(() => {
-    if (visible) {
-      setShouldRender(true);
-    }
-    function handleAnimationEnd() {
-      setShouldRender(false);
-    }
-    if (!visible && overlayRef.current) {
-      overlayRef.current.addEventListener('animationend', handleAnimationEnd);
-    }
-    return () => {
-      if (overlayRef.current) {
-        overlayRef.current.removeEventListener('animationend', handleAnimationEnd);
-      }
-    };
-  }, [visible]);
-  // React portal
+  const { shouldRender, animatedElementRef } = useAnimatedUnmount(visible);
   if (shouldRender) {
     return (
+    // React portal
       <ReactPortal portalId="modal-root">
-        <Overlay ref={overlayRef} isLeaving={!visible}>
+        <Overlay ref={animatedElementRef} isLeaving={!visible}>
           <Container danger={danger} isLeaving={!visible}>
             <h1>{title}</h1>
             <div className="modal-body">

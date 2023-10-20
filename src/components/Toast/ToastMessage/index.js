@@ -1,12 +1,12 @@
 import PropType from 'prop-types';
 
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { Container } from './styles';
 import xCircle from '../../../assets/images/icons/x-circle.svg';
 import checkCircle from '../../../assets/images/icons/check-circle.svg';
 
-export default function ToastMessage({
-  message, onClose,
+function ToastMessage({
+  message, onClose, isLeaving, animatedElementRef,
 }) {
   useEffect(() => {
     const timeoutId = setTimeout(() => onClose(message.id), message.duration || 7000);
@@ -15,15 +15,19 @@ export default function ToastMessage({
       clearTimeout(timeoutId);
     };
   }, [message, onClose]);
+
   function handleCloseClick() {
     onClose(message.id);
   }
+
   return (
     <Container
       tabIndex={0}
       role="button"
       type={message.type}
       onClick={handleCloseClick}
+      isLeaving={isLeaving}
+      ref={animatedElementRef}
     >
       {message.type === 'danger' && <img src={xCircle} alt="x circle" />}
       {message.type === 'success' && <img src={checkCircle} alt="success" />}
@@ -35,9 +39,11 @@ export default function ToastMessage({
     </Container>
   );
 }
-
+export default memo(ToastMessage);
 ToastMessage.propTypes = {
   onClose: PropType.func.isRequired,
+  animatedElementRef: PropType.shape().isRequired,
+  isLeaving: PropType.bool.isRequired,
   message: PropType.shape({
     id: PropType.number.isRequired,
     text: PropType.string.isRequired,

@@ -58,7 +58,7 @@ export const Overlay = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: ${fadeIn} 0.4s;
+    animation: ${fadeIn} 0.3s;
 
     ${({ isLeaving }) => isLeaving && css`animation: ${fadeOut} 0.2s;`}
 `;
@@ -80,9 +80,9 @@ export const Container = styled.div`
     .modal-body{
         margin-top:32px
     }
-    animation: ${scaleIn} 0.3s;
+    animation: ${scaleIn} 0.2s;
 
-    ${({ isLeaving }) => isLeaving && css`animation: ${scaleOut} 0.2s`}
+    ${({ isLeaving }) => isLeaving && css`animation: ${scaleOut} 0.2;`}
 `;
 
 export const Footer = styled.footer`

@@ -1,17 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toastEventManager } from '../../../services/utils/toast';
 import ToastMessage from '../ToastMessage';
 import { Container } from './styles';
+import useAnimatedList from '../../../hooks/useAnimatedList';
 
 export default function ToastContainer() {
-  const [messages, setMessages] = useState([]);
-  const removeToast = useCallback((messageId) => {
-    setMessages((prev) => prev.filter((message) => message.id !== messageId));
-  }, []);
+  const {
+    setItems, handleRemove, renderList,
+  } = useAnimatedList();
+
   useEffect(
     () => {
       function addToast({ type, text, duration }) {
-        setMessages(
+        setItems(
           (prev) => [...prev,
             {
               id: Math.random(), type, text, duration,
@@ -24,15 +25,18 @@ export default function ToastContainer() {
         toastEventManager.removeLister('addtoast', addToast);
       };
     },
-    [],
+    [setItems],
   );
+
   return (
     <Container>
-      {messages.map((mes) => (
+      {renderList((mes, { isLeaving, animatedElementRef }) => (
         <ToastMessage
           key={mes.id}
           message={mes}
-          onClose={removeToast}
+          onClose={handleRemove}
+          isLeaving={isLeaving}
+          animatedElementRef={animatedElementRef}
         />
       ))}
     </Container>
