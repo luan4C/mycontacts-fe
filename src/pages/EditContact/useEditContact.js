@@ -15,22 +15,28 @@ export default function useEditContact() {
   const isMounted = useIsMounted();
   const safeAsyncAction = useSafeAsyncAction();
   useEffect(() => {
-    async function loadContact() {
+    const abortController = new AbortController();
+    async function loadContact(abortSignal) {
       try {
-        const contactData = await ContactsServices.getContactById(id);
+        const contactData = await ContactsServices.getContactById(id, abortSignal);
         safeAsyncAction(() => {
           contactRef.current.setFieldsValues(contactData);
           setContactName(contactData.name);
           setIsLoading(false);
         });
-      } catch {
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return;
+        }
         safeAsyncAction(() => {
           navigate('/');
           toast({ type: 'danger', text: 'Contato não encontrado' });
         });
       }
     }
-    loadContact();
+    loadContact(abortController.signal);
+
+    return () => abortController.abort();
   }, [id, navigate, isMounted]);
 
   async function handleSubmit(contact) {

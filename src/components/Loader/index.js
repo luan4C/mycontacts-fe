@@ -18,7 +18,7 @@ export default function Loader({ isLoading }) {
 
   return (
     <ReactPortal portalId="loader-root">
-      <Overlay isLeaving={isLoading} ref={animatedElementRef}>
+      <Overlay isleaving={isLoading.toString()} ref={animatedElementRef}>
         <Spinner size={90} />
       </Overlay>
     </ReactPortal>

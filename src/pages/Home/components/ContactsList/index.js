@@ -1,11 +1,12 @@
 import Proptypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { memo } from 'react';
 import arrow from '../../../../assets/images/icons/arrow.svg';
 import edit from '../../../../assets/images/icons/edit.svg';
 import trash from '../../../../assets/images/icons/trash.svg';
 import { Card, Header } from './styles';
 
-export default function ContactsList({
+function ContactsList({
   filteredContacts,
   sortOrder,
   onSort,
@@ -15,7 +16,7 @@ export default function ContactsList({
   return (
     <>
       {filteredContacts.length > 1 && (
-      <Header sortOrder={sortOrder}>
+      <Header sortorder={sortOrder}>
         <header>
           <button onClick={onSort} type="button" className="sort-button">
             <span>
@@ -67,3 +68,5 @@ ContactsList.propTypes = {
   onSort: Proptypes.func.isRequired,
   onDeleteContact: Proptypes.func.isRequired,
 };
+
+export default memo(ContactsList);

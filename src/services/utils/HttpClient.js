@@ -6,7 +6,7 @@ class HttpClient {
   }
 
   get(path, options) {
-    return this.makeRequest(path, { method: 'GET', headers: options?.headers });
+    return this.makeRequest(path, { method: 'GET', headers: options?.headers, signal: options?.signal });
   }
 
   post(path, options) {
@@ -39,6 +39,7 @@ class HttpClient {
       method: options.method,
       body: JSON.stringify(options.body),
       headers,
+      signal: options.signal,
     });
 
     const contentType = response.headers.get('Content-Type');

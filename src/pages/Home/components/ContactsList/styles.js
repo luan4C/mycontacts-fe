@@ -21,7 +21,7 @@ export const Header = styled.div`
         }
 
         img {
-            ${({ sortOrder }) => sortOrder === 'desc' && css`
+            ${({ sortorder }) => sortorder === 'desc' && css`
                     transform: rotate(180deg);
             `}
 

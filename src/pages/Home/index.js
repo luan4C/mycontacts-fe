@@ -66,7 +66,7 @@ export default function Home() {
           title={`Tem certeza que deseja remover o contato "${contactBeingDeleted?.name}"?`}
           cancelLabel="cancelar"
           confirmLabel="Deletar"
-          onCancel={handleDeleteModalCancel}
+          oncancel={handleDeleteModalCancel}
           onConfirm={handleDeleteModalConfirm}
           visible={isDeleteModalVisible}
           isLoading={isDeleting}

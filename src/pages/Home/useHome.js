@@ -1,5 +1,5 @@
 import {
-  useState, useMemo, useCallback, useEffect,
+  useState, useMemo, useCallback, useEffect, useDeferredValue,
 } from 'react';
 import ContactsServices from '../../services/ContactsServices';
 import toast from '../../services/utils/toast';
@@ -14,16 +14,24 @@ export default function useHome() {
   const [contactBeingDeleted, setContactBeingDeleted] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const filteredContacts = useMemo(() => contacts.filter((contact) => (
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()))), [contacts, searchTerm]);
+  const deferredSearchTerm = useDeferredValue(searchTerm);
 
-  const loadContacts = useCallback(async () => {
+  const filteredContacts = useMemo(
+    () => contacts.filter((contact) => (
+      contact.name.toLowerCase().includes(deferredSearchTerm.toLowerCase()))),
+    [contacts, deferredSearchTerm],
+  );
+
+  const loadContacts = useCallback(async (abortSignal) => {
     try {
       setIsLoading(true);
-      const contactsList = await ContactsServices.listContacts(sortOrder);
+      const contactsList = await ContactsServices.listContacts(abortSignal, sortOrder);
       setHasError(false);
       setContacts(contactsList);
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
       setHasError(true);
       setContacts([]);
     } finally {
@@ -31,8 +39,11 @@ export default function useHome() {
     }
   }, [sortOrder]);
   useEffect(
+
     () => {
-      loadContacts();
+      const abortController = new AbortController();
+      loadContacts(abortController.signal);
+      return () => abortController.abort();
     },
     [loadContacts],
   );
@@ -46,13 +57,13 @@ export default function useHome() {
   function handleTryAgain() {
     loadContacts();
   }
-  function handleDeleteModalTogge(contact) {
+  const handleDeleteModalTogge = useCallback((contact) => {
     setContactBeingDeleted(contact);
     setisDeleteModalVisible(true);
-  }
-  function handleDeleteModalCancel() {
+  }, []);
+  const handleDeleteModalCancel = useCallback(() => {
     setisDeleteModalVisible(false);
-  }
+  }, []);
 
   async function handleDeleteModalConfirm() {
     try {

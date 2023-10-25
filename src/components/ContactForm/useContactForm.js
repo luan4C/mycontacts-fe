@@ -1,11 +1,11 @@
 import {
-  useCallback, useEffect, useState, useImperativeHandle,
+  useEffect, useState, useImperativeHandle,
 } from 'react';
 import isEmailValid from '../../utils/isEmailValid';
 import useErrors from '../../hooks/useError';
 import formatPhone from '../../utils/formatPhone';
 import CategoriesServices from '../../services/CategoriesServices';
-import toast from '../../services/utils/toast';
+
 import useSafeAsynState from '../../hooks/useSafeAsyncState';
 
 export default function useContactForm(onSubmit, ref) {
@@ -20,16 +20,6 @@ export default function useContactForm(onSubmit, ref) {
   const {
     errors, setError, removeError, getErrosMensageByFieldName,
   } = useErrors();
-  const getCategories = useCallback(async () => {
-    try {
-      const data = await CategoriesServices.getCategories();
-      setCategories(data);
-    } catch {
-      toast({ type: 'danger', text: 'Erro ao buscar categorias' });
-    } finally {
-      setIsCategoriesLoading(false);
-    }
-  }, [setCategories, setIsCategoriesLoading]);
 
   const isFormInvalid = !(name && errors.length === 0);
 
@@ -82,8 +72,19 @@ export default function useContactForm(onSubmit, ref) {
     }), []);
 
   useEffect(() => {
-    getCategories();
-  }, [getCategories]);
+    const abortController = new AbortController();
+    async function getCategoreis(abortSignal) {
+      try {
+        const data = await CategoriesServices.getCategories(abortSignal);
+        setCategories(data);
+      } catch {} finally {
+        setIsCategoriesLoading(false);
+      }
+    }
+    getCategoreis(abortController.signal);
+
+    return () => abortController.abort();
+  }, []);
 
   return {
     handleOnSubmit,

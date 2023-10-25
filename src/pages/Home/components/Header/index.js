@@ -9,7 +9,7 @@ export default function Header({ hasError, qtyOfContacts, qtyOfFilteredContacts 
   return (
 
     <Container
-      justifyContent={alignment}
+      justifycontent={alignment}
     >
       { (!hasError && qtyOfContacts > 0)
         && (
